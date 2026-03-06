@@ -1,0 +1,23 @@
+name: Build and Test Docker Image
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t muathaf-cloud-app .
+
+      - name: Run container and test
+        run: |
+          docker run -d -p 8000:8000 --name test-container muathaf-cloud-app
+          sleep 5
+          curl http://localhost:8000
+          curl http://localhost:8000/health
+          docker stop test-container
